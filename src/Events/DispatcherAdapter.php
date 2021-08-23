@@ -19,9 +19,14 @@ class DispatcherAdapter implements EventDispatcherInterface
 
     protected $dispatcher;
 
+    private $plainEvents;
+
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
+        $this->plainEvents = array_map(function ($event) {
+            return "workflow.${event}";
+        }, array_keys(static::EVENT_MAP));
     }
 
     /**
@@ -38,10 +43,25 @@ class DispatcherAdapter implements EventDispatcherInterface
         $name = is_null($eventName) ? get_class($event) : $eventName;
 
         $eventToDispatch = $this->translateEvent($eventName, $event);
-        $this->dispatcher->dispatch($eventToDispatch);
+
+        // Only dispatch the class event once
+        if ($this->shouldDispatchPlainClassEvent($eventName)) {
+            $this->dispatcher->dispatch($eventToDispatch);
+        }
+
+        // Dispatch with the Symfony dot syntax event names
         $this->dispatcher->dispatch($name, $eventToDispatch);
 
         return $eventToDispatch;
+    }
+
+    private function shouldDispatchPlainClassEvent(?string $eventName = null)
+    {
+        if (! $eventName) {
+            return false;
+        }
+
+        return in_array($eventName, $this->plainEvents);
     }
 
     private function translateEvent(?string $eventName, object $symfonyEvent): object

@@ -41,9 +41,20 @@ class DispatchAdapterTest extends TestCase
     public function testAdaptsSymfonyEventsToLaravel($expectedPackageEvent, $symfonyEvent, $eventDotName, $expectedDotName)
     {
         $mockDispatcher = Mockery::mock(Dispatcher::class);
-        $mockDispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with($expectedPackageEvent);
+
+        if (in_array($eventDotName, [
+            'workflow.guard',
+            'workflow.leave',
+            'workflow.transition',
+            'workflow.enter',
+            'workflow.entered',
+            'workflow.completed',
+            'workflow.announce',
+        ])) {
+            $mockDispatcher->shouldReceive('dispatch')
+                ->once()
+                ->with($expectedPackageEvent);
+        }
         $mockDispatcher->shouldReceive('dispatch')
             ->once()
             ->with($expectedDotName, $expectedPackageEvent);
