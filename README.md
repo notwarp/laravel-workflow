@@ -169,7 +169,7 @@ return [
                 'metadata' => [
                     'max_num_of_words' => 500,
                 ]
-            ]
+            ],
             'review',
             'rejected',
             'published'
