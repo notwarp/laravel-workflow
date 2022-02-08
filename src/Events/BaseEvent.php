@@ -14,37 +14,17 @@ use Workflow;
  * @method string getWorkflowName()
  * @method mixed getMetadata(string $key, $subject)
  */
-abstract class BaseEvent implements Serializable
+abstract class BaseEvent extends Event implements Serializable
 {
-    /**
-     * @var Event
-     */
-    protected $originalEvent;
-
-    public function __construct(Event $event)
-    {
-        $this->originalEvent = $event;
-    }
-
-    /**
-     * Return the original event
-     *
-     * @return Event
-     */
-    public function getOriginalEvent()
-    {
-        return $this->originalEvent;
-    }
-
     public function serialize()
     {
         return serialize([
-            'base_event_class' => get_class($this->originalEvent),
-            'subject' => $this->originalEvent->getSubject(),
-            'marking' => $this->originalEvent->getMarking(),
-            'transition' => $this->originalEvent->getTransition(),
+            'base_event_class' => get_class($this),
+            'subject' => $this->getSubject(),
+            'marking' => $this->getMarking(),
+            'transition' => $this->getTransition(),
             'workflow' => [
-                'name' => $this->originalEvent->getWorkflowName(),
+                'name' => $this->getWorkflowName(),
             ],
         ]);
     }
@@ -53,22 +33,24 @@ abstract class BaseEvent implements Serializable
     {
         $unserialized = unserialize($serialized);
 
-        $subject = $unserialized['subject'];
-        $marking = $unserialized['marking'];
-        $transition = $unserialized['transition'] ?? null;
+        $this->subject = $unserialized['subject'];
+        $this->marking = $unserialized['marking'];
+        $this->transition = $unserialized['transition'] ?? null;
         $workflowName = $unserialized['workflow']['name'] ?? null;
-        $workflow = Workflow::get($subject, $workflowName);
-
-        $eventClass = $unserialized['base_event_class'] ?? Event::class;
-        $event = new $eventClass($subject, $marking, $transition, $workflow);
-
-        $this->originalEvent = $event;
+        $this->workflow = Workflow::get($this->subject, $workflowName);
     }
 
-    public function __call($name, $arguments)
+    /**
+     * Creates a new instance from the base Symfony event
+     */
+    public static function newFromBase(Event $symfonyEvent)
     {
-        if (method_exists($this->originalEvent, $name)) {
-            return call_user_func_array([$this->originalEvent, $name], $arguments);
-        }
+        return new static(
+            $symfonyEvent->getSubject(),
+            $symfonyEvent->getMarking(),
+            $symfonyEvent->getTransition(),
+            $symfonyEvent->getWorkflow(),
+            $symfonyEvent->getContext()
+        );
     }
 }

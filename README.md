@@ -1,5 +1,11 @@
 # Laravel workflow [![Build Status](https://travis-ci.com/zerodahero/laravel-workflow.svg?branch=develop)](https://travis-ci.org/zerodahero/laravel-workflow)
 
+## :warning: Looking for help maintaining!
+
+It's been several years since I've actually used this package in a project. It's relatively low maintenance since it's mostly just an adapter for the Symfony component. It's been harder and harder to find time to spend on this project, so I'm looking for help in maintaining it, or if there's a good fit, to take over the package entirely.
+
+---
+
 This is a fork from [brexis/laravel-workflow](https://github.com/brexis/laravel-workflow). My current needs for this package are a bit more bleeding-edge than seem to be maintainable by the other packages. Massive kudos to brexis for the original work and adaptation on this.
 
 Use the Symfony Workflow component in Laravel

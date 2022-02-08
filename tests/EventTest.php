@@ -29,42 +29,13 @@ class EventTest extends TestCase
             new \Symfony\Component\Workflow\Transition('transition_name', 'here', 'there'),
             Workflow::get($subject, 'straight')
         );
-        $event = new TransitionEvent($baseEvent);
+        $event = TransitionEvent::newFromBase($baseEvent);
         $serialized = serialize($event);
 
         $this->assertIsString($serialized);
 
         $unserialized = unserialize($serialized);
         $this->assertInstanceOf(TransitionEvent::class, $unserialized);
-        $this->assertEquals($baseEvent, $unserialized->getOriginalEvent());
-    }
-
-    /**
-     * @test
-     */
-    public function testProxiesCalls()
-    {
-        $subject = new TestModel();
-        $marking = new \Symfony\Component\Workflow\Marking(['here' => 1]);
-        $transition = new \Symfony\Component\Workflow\Transition('transition_name', 'here', 'there');
-        $workflow = Workflow::get($subject, 'straight');
-        $baseEvent = new \Symfony\Component\Workflow\Event\Event(
-            $subject,
-            $marking,
-            $transition,
-            $workflow
-        );
-        $event = new TransitionEvent($baseEvent);
-
-        $this->assertEquals($marking, $event->getMarking());
-        $this->assertEquals($subject, $event->getSubject());
-        $this->assertEquals($transition, $event->getTransition());
-        $this->assertEquals($workflow, $event->getWorkflow());
-        $this->assertEquals('straight', $event->getWorkflowName());
-        // FUTURE
-        // $this->assertEquals(??, $event->getMetadata(string $key, $subject));
-
-        $this->assertNull($event->doSomethingUndefined());
     }
 
     /**

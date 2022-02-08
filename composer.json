@@ -4,9 +4,9 @@
     "keywords": ["workflow", "symfony", "laravel", "laravel7", "laravel8"],
     "license": "MIT",
     "require": {
-        "php": ">=7.2",
-        "symfony/workflow": "^5.0",
-        "symfony/process": "^5.0",
+        "php": ">=7.4",
+        "symfony/workflow": "^5.0|^6.0",
+        "symfony/process": "^5.0|^6.0",
         "symfony/event-dispatcher-contracts": "^2.4",
         "illuminate/console": "^7.1|^8.0",
         "illuminate/support": "^7.1|^8.0",
@@ -37,9 +37,10 @@
     },
     "require-dev": {
         "mockery/mockery": "^1.2",
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "^9.0",
         "symfony/var-dumper": "^5.0",
         "fakerphp/faker": "^1.13",
-        "orchestra/testbench": "^5.2|^6.0"
+        "orchestra/testbench": "^5.2|^6.0",
+        "symfony/contracts": "^2.3"
     }
 }
