@@ -27,7 +27,7 @@ composer require zerodahero/laravel-workflow
 
 ## Upgrade from v3 to v4
 
-The changes is to the PHP and Laravel version, which only PHP 8.0, 8.1 and Laravel 8 and Laravel 9 are supported in this version. If you required to use the older version, do take from version 3.4.
+The changes is to the PHP and Laravel version, which only PHP 8.0, 8.1 and Laravel 9 are supported in this version. If you required to use the older version, do take from version 3.4.
 
 ## Upgrade from v2 to v3
 
