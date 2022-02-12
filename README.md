@@ -12,7 +12,9 @@ Use the Symfony Workflow component in Laravel
 
 ## Installation
 
-    composer require zerodahero/laravel-workflow
+```bash
+composer require zerodahero/laravel-workflow
+```
 
 ## Laravel Support
 
@@ -21,6 +23,11 @@ Use the Symfony Workflow component in Laravel
 | ^2.0 | 5.x |
 | ^3.0 | 7.x |
 | ^3.2 | 8.x |
+| ^4.0 | 9.x |
+
+## Upgrade from v3 to v4
+
+The changes is to the PHP and Laravel version, which only PHP 8.0, 8.1 and Laravel 8 and Laravel 9 are supported in this version. If you required to use the older version, do take from version 3.4.
 
 ## Upgrade from v2 to v3
 
