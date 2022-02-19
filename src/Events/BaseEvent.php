@@ -16,6 +16,28 @@ use Workflow;
  */
 abstract class BaseEvent extends Event implements Serializable
 {
+    public function __serialize(): array
+    {
+        return [
+            'base_event_class' => get_class($this),
+            'subject' => $this->getSubject(),
+            'marking' => $this->getMarking(),
+            'transition' => $this->getTransition(),
+            'workflow' => [
+                'name' => $this->getWorkflowName(),
+            ],
+        ];
+    }
+
+    public function __unserialize(array $unserialized): void 
+    {
+        $this->subject = $unserialized['subject'];
+        $this->marking = $unserialized['marking'];
+        $this->transition = $unserialized['transition'] ?? null;
+        $workflowName = $unserialized['workflow']['name'] ?? null;
+        $this->workflow = Workflow::get($this->subject, $workflowName);
+    }
+
     public function serialize()
     {
         return serialize([
