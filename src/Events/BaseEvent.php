@@ -29,37 +29,23 @@ abstract class BaseEvent extends Event implements Serializable
         ];
     }
 
-    public function __unserialize(array $unserialized): void 
+    public function __unserialize(array $data): void
     {
-        $this->subject = $unserialized['subject'];
-        $this->marking = $unserialized['marking'];
-        $this->transition = $unserialized['transition'] ?? null;
-        $workflowName = $unserialized['workflow']['name'] ?? null;
+        $this->subject = $data['subject'];
+        $this->marking = $data['marking'];
+        $this->transition = $data['transition'] ?? null;
+        $workflowName = $data['workflow']['name'] ?? null;
         $this->workflow = Workflow::get($this->subject, $workflowName);
     }
 
     public function serialize()
     {
-        return serialize([
-            'base_event_class' => get_class($this),
-            'subject' => $this->getSubject(),
-            'marking' => $this->getMarking(),
-            'transition' => $this->getTransition(),
-            'workflow' => [
-                'name' => $this->getWorkflowName(),
-            ],
-        ]);
+        return serialize($this->__serialize());
     }
 
     public function unserialize($serialized)
     {
-        $unserialized = unserialize($serialized);
-
-        $this->subject = $unserialized['subject'];
-        $this->marking = $unserialized['marking'];
-        $this->transition = $unserialized['transition'] ?? null;
-        $workflowName = $unserialized['workflow']['name'] ?? null;
-        $this->workflow = Workflow::get($this->subject, $workflowName);
+        $this->__unserialize(unserialize($serialized));
     }
 
     /**
