@@ -29,7 +29,7 @@ abstract class BaseEvent extends Event implements Serializable
         ];
     }
 
-    public function __unserialize(array $unserialized): void 
+    public function __unserialize(array $unserialized): void
     {
         $this->subject = $unserialized['subject'];
         $this->marking = $unserialized['marking'];
