@@ -3,9 +3,6 @@
 return [
     'straight' => [
         'type' => 'state_machine',
-        'marking_store' => [
-            'type' => 'single_state',
-        ],
         'supports' => ['stdClass'],
         'places' => ['a', 'b', 'c'],
         'transitions' => [
