@@ -3,11 +3,13 @@
 namespace Tests;
 
 use Event;
+use Workflow;
+use Tests\Fixtures\TestModel;
 use Orchestra\Testbench\TestCase;
 use Tests\Fixtures\TestEloquentModel;
-use Tests\Fixtures\TestModel;
 use Tests\Fixtures\TestWorkflowListener;
-use Workflow;
+use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
+use Symfony\Component\Workflow\TransitionBlockerList;
 use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
 use ZeroDaHero\LaravelWorkflow\Facades\WorkflowFacade;
 use ZeroDaHero\LaravelWorkflow\WorkflowServiceProvider;
@@ -36,6 +38,29 @@ class EventTest extends TestCase
 
         $unserialized = unserialize($serialized);
         $this->assertInstanceOf(TransitionEvent::class, $unserialized);
+    }
+
+    /**
+     * @test
+     */
+    public function testGuardEventSerializesAndUnserializes()
+    {
+        $subject = new TestModel();
+        $event = new GuardEvent(
+            $subject,
+            new \Symfony\Component\Workflow\Marking(['here' => 1]),
+            new \Symfony\Component\Workflow\Transition('transition_name', 'here', 'there'),
+            Workflow::get($subject, 'straight')
+        );
+        $serialized = serialize($event);
+
+        $this->assertIsString($serialized);
+
+        $unserialized = unserialize($serialized);
+        $this->assertInstanceOf(GuardEvent::class, $unserialized);
+
+        // Attempt a proxy method
+        $this->assertInstanceOf(TransitionBlockerList::class, $unserialized->getTransitionBlockerList());
     }
 
     /**
