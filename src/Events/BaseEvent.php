@@ -2,9 +2,9 @@
 
 namespace ZeroDaHero\LaravelWorkflow\Events;
 
+use Workflow;
 use Serializable;
 use Symfony\Component\Workflow\Event\Event;
-use Workflow;
 
 /**
  * @method Marking getMarking()

@@ -2,22 +2,22 @@
 
 namespace ZeroDaHero\LaravelWorkflow;
 
-use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
+use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\DefinitionBuilder;
+use ZeroDaHero\LaravelWorkflow\Events\DispatcherAdapter;
+use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
+use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
-use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
-use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\StateMachine;
-use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
-use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\Workflow;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use ZeroDaHero\LaravelWorkflow\Events\DispatcherAdapter;
+use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
 use ZeroDaHero\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
 use ZeroDaHero\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
-use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 
 class WorkflowRegistry
 {

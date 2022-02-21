@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use Illuminate\Events\Dispatcher;
-use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\TestObject;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Events\Dispatcher;
 use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
 
 class WorkflowMetadataTest extends TestCase

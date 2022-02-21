@@ -3,14 +3,14 @@
 namespace ZeroDaHero\LaravelWorkflow\Commands;
 
 use Config;
+use Storage;
+use Workflow;
 use Exception;
 use Illuminate\Console\Command;
-use Storage;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Dumper\GraphvizDumper;
 use Symfony\Component\Workflow\Dumper\StateMachineGraphvizDumper;
-use Symfony\Component\Workflow\StateMachine;
-use Workflow;
 
 /**
  * @author Boris Koumondji <brexis@yahoo.fr>
@@ -70,6 +70,7 @@ class WorkflowDumpCommand extends Command
         $definition = $workflow->getDefinition();
 
         $dumper = new GraphvizDumper();
+
         if ($workflow instanceof StateMachine) {
             $dumper = new StateMachineGraphvizDumper();
         }
