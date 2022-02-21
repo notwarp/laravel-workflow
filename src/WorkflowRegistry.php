@@ -153,8 +153,14 @@ class WorkflowRegistry
                 $transitionName = $transition['name'];
             }
 
-            foreach ((array) $transition['from'] as $form) {
-                $transitionObj = new Transition($transitionName, $form, $transition['to']);
+            $froms = (isset($workflowData['type']) && $workflowData['type'] === 'state_machine')
+                // In a state machine, we create a transition for _each_ from
+                ? (array) $transition['from']
+                // In a workflow, the transition goes from multiple places
+                : [$transition['from']];
+
+            foreach ($froms as $from) {
+                $transitionObj = new Transition($transitionName, $from, $transition['to']);
                 $builder->addTransition($transitionObj);
 
                 if (isset($transition['metadata'])) {

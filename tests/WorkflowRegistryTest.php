@@ -190,7 +190,7 @@ class WorkflowRegistryTest extends BaseWorkflowTestCase
     /**
      * @test
      */
-    public function testWhenMultipleFromIsUsed()
+    public function testWhenMultipleFromIsUsedStateMachine()
     {
         $config = [
             'straight' => [
@@ -228,6 +228,53 @@ class WorkflowRegistryTest extends BaseWorkflowTestCase
         $this->assertInstanceof(EloquentMarkingStore::class, $markingStore);
         $this->assertTrue($workflow->can($subject, 't1'));
         $this->assertTrue($workflow->can($subject, 't2'));
+    }
+
+    /**
+     * @test
+     */
+    public function testWhenMultipleFromIsUsedWorkflow()
+    {
+        $config = [
+            'straight' => [
+                'type' => 'workflow',
+                'supports' => ['Tests\Fixtures\TestObject'],
+                'places' => ['a', 'b', 'c', 'd'],
+                'transitions' => [
+                    [
+                        'name' => 't1',
+                        'from' => 'a',
+                        'to' => ['b','c'],
+                    ],
+                    [
+                        'name' => 't2',
+                        'from' => [
+                            'b',
+                            'c',
+                        ],
+                        'to' => 'd',
+                    ],
+                ],
+            ],
+        ];
+
+        $registry = new WorkflowRegistry($config, null, new Dispatcher());
+        $subject = new TestObject();
+        $workflow = $registry->get($subject);
+
+        $markingStoreProp = new ReflectionProperty(Workflow::class, 'markingStore');
+        $markingStoreProp->setAccessible(true);
+
+        $markingStore = $markingStoreProp->getValue($workflow);
+
+        $this->assertInstanceof(Workflow::class, $workflow);
+        $this->assertInstanceof(EloquentMarkingStore::class, $markingStore);
+        $this->assertTrue($workflow->can($subject, 't1'));
+        $this->assertFalse($workflow->can($subject, 't2'));
+
+        $workflow->apply($subject, 't1');
+        $this->assertTrue($workflow->can($subject, 't2'));
+        $this->assertFalse($workflow->can($subject, 't1'));
     }
 
     /**
