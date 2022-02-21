@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Tests\Helpers\CanAccessProtected;
 use ZeroDaHero\LaravelWorkflow\Events\AnnounceEvent;
 use ZeroDaHero\LaravelWorkflow\Events\BaseEvent;
@@ -63,10 +65,7 @@ class DispatchAdapterTest extends TestCase
         $event = $adapter->dispatch($symfonyEvent, $eventDotName);
         $this->assertInstanceOf($expectedPackageEvent, $event);
 
-        // If it was our event, check the original event matches
-        if ($event instanceof BaseEvent) {
-            $this->assertEquals($symfonyEvent, $event->getOriginalEvent());
-        }
+        $this->assertInstanceOf(BaseEvent::class, $event);
     }
 
     public function providesEventScenarios()
@@ -75,6 +74,7 @@ class DispatchAdapterTest extends TestCase
 
         $dispatcher = new DispatcherAdapter(Mockery::mock(Dispatcher::class));
         $eventList = $this->getProtectedConstant($dispatcher, 'EVENT_MAP');
+        $mockWorkflow = Mockery::mock(WorkflowInterface::class);
 
         $reverseMap = [
             GuardEvent::class => \Symfony\Component\Workflow\Event\GuardEvent::class,
@@ -98,7 +98,7 @@ class DispatchAdapterTest extends TestCase
                 $name = implode($nameSeparator, $faker->words(3));
 
                 $symfonyEvent = $reverseMap[$expectedEventClass];
-                $symfonyEvent = new $symfonyEvent(new stdClass(), new Marking(), new Transition($transition, [], []));
+                $symfonyEvent = new $symfonyEvent(new stdClass(), new Marking(), new Transition($transition, [], []), $mockWorkflow);
 
                 foreach ([
                     "workflow.${eventType}",

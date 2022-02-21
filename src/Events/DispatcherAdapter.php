@@ -67,18 +67,18 @@ class DispatcherAdapter implements EventDispatcherInterface
     private function translateEvent(?string $eventName, object $symfonyEvent): object
     {
         if (is_null($eventName)) {
-            return new WorkflowEvent($symfonyEvent);
+            return WorkflowEvent::newFromBase($symfonyEvent);
         }
 
         $event = $this->parseWorkflowEventFromEventName($eventName);
 
         if (! $event) {
-            return new WorkflowEvent($symfonyEvent);
+            return WorkflowEvent::newFromBase($symfonyEvent);
         }
 
         $translatedEventClass = static::EVENT_MAP[$event];
 
-        return new $translatedEventClass($symfonyEvent);
+        return $translatedEventClass::newFromBase($symfonyEvent);
     }
 
     private function parseWorkflowEventFromEventName(string $eventName)
