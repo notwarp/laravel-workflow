@@ -50,6 +50,10 @@ class WorkflowDumpCommand extends Command
         $config = Config::get('workflow');
         $disk = $this->option('disk');
         $optionalPath = $this->option('path');
+
+        if ($disk === 'local') {
+            $optionalPath ??= '.';
+        }
         $path = Storage::disk($disk)->path($optionalPath);
 
         if ($optionalPath && ! Storage::disk($disk)->exists($optionalPath)) {
