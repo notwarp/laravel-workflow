@@ -2,18 +2,18 @@
 
 namespace Tests;
 
-use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
+use Tests\Fixtures\TestObject;
 use Illuminate\Support\Facades\Event;
 use Symfony\Component\Workflow\WorkflowEvents;
-use Tests\Fixtures\TestObject;
-use ZeroDaHero\LaravelWorkflow\Events\AnnounceEvent;
-use ZeroDaHero\LaravelWorkflow\Events\CompletedEvent;
-use ZeroDaHero\LaravelWorkflow\Events\EnteredEvent;
+use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
 use ZeroDaHero\LaravelWorkflow\Events\EnterEvent;
 use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
 use ZeroDaHero\LaravelWorkflow\Events\LeaveEvent;
+use ZeroDaHero\LaravelWorkflow\Events\EnteredEvent;
+use ZeroDaHero\LaravelWorkflow\Events\AnnounceEvent;
+use ZeroDaHero\LaravelWorkflow\Events\CompletedEvent;
 use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
-use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
+use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
 
 class WorkflowEventsTest extends BaseWorkflowTestCase
 {

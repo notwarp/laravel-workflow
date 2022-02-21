@@ -2,8 +2,8 @@
 
 namespace ZeroDaHero\LaravelWorkflow;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Events\Dispatcher;
 
 class WorkflowServiceProvider extends ServiceProvider
 {

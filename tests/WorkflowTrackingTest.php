@@ -2,12 +2,12 @@
 
 namespace Tests;
 
-use Illuminate\Events\Dispatcher;
-use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\TestObject;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Events\Dispatcher;
+use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
 use ZeroDaHero\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
 use ZeroDaHero\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
-use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
 
 class WorkflowTrackingTest extends TestCase
 {

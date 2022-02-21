@@ -2,17 +2,17 @@
 
 namespace Tests;
 
-use Illuminate\Events\Dispatcher;
-use Illuminate\Support\Facades\Event;
 use ReflectionProperty;
-use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
-use Symfony\Component\Workflow\StateMachine;
-use Symfony\Component\Workflow\Workflow;
-use Tests\Fixtures\TestCustomObject;
 use Tests\Fixtures\TestObject;
+use Illuminate\Events\Dispatcher;
+use Tests\Fixtures\TestCustomObject;
+use Illuminate\Support\Facades\Event;
 use Tests\Helpers\CanAccessProtected;
-use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
+use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\StateMachine;
 use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
+use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
 
 class WorkflowRegistryTest extends BaseWorkflowTestCase
 {
