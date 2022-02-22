@@ -249,8 +249,7 @@ class WorkflowRegistryTest extends BaseWorkflowTestCase
                     [
                         'name' => 't2',
                         'from' => [
-                            'b',
-                            'c',
+                            ['b','c'],
                         ],
                         'to' => 'd',
                     ],
