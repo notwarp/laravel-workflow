@@ -11,6 +11,11 @@ trait WorkflowTrait
 {
     public function workflow_apply($transition, $workflow = null, array $context = [])
     {
+        if (is_array($workflow)) {
+            $context = $workflow;
+            $workflow = null;
+        }
+
         return Workflow::get($this, $workflow)->apply($this, $transition, $context);
     }
 
