@@ -6,10 +6,10 @@ use Workflow;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
- * @method Marking getMarking()
+ * @method \Symfony\Component\Workflow\Marking getMarking()
  * @method object getSubject()
- * @method Transition getTransition()
- * @method WorkflowInterface getWorkflow()
+ * @method \Symfony\Component\Workflow\Transition getTransition()
+ * @method \Symfony\Component\Workflow\WorkflowInterface getWorkflow()
  * @method string getWorkflowName()
  * @method mixed getMetadata(string $key, $subject)
  */
