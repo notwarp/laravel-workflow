@@ -4,6 +4,7 @@ namespace ZeroDaHero\LaravelWorkflow\Events;
 
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Component\Workflow\Event\GuardEvent as SymfonyGuardEvent;
 
@@ -43,5 +44,23 @@ class GuardEvent extends BaseEvent
             $this->getWorkflow(),
             $this->getContext()
         );
+    }
+
+    /**
+     * Creates a new instance from the base Symfony event
+     */
+    public static function newFromBase(Event $symfonyEvent)
+    {
+        $instance = new static(
+            $symfonyEvent->getSubject(),
+            $symfonyEvent->getMarking(),
+            $symfonyEvent->getTransition(),
+            $symfonyEvent->getWorkflow(),
+            $symfonyEvent->getContext()
+        );
+
+        $instance->symfonyProxyEvent = $symfonyEvent;
+
+        return $instance;
     }
 }

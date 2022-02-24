@@ -84,6 +84,10 @@ class EventTest extends TestCase
         $event->setBlocked(true);
 
         $this->assertTrue($event->isBlocked());
+
+        $blockerList = $event->getTransitionBlockerList();
+        $this->assertInstanceOf(TransitionBlockerList::class, $blockerList);
+        $this->assertFalse($blockerList->isEmpty());
     }
 
     /**

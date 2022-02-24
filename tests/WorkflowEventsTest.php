@@ -14,6 +14,7 @@ use ZeroDaHero\LaravelWorkflow\Events\AnnounceEvent;
 use ZeroDaHero\LaravelWorkflow\Events\CompletedEvent;
 use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
+use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
 
 class WorkflowEventsTest extends BaseWorkflowTestCase
 {
@@ -235,6 +236,42 @@ class WorkflowEventsTest extends BaseWorkflowTestCase
         Event::assertDispatched(function (AnnounceEvent $event) use ($context) {
             return $event->getContext() == $context;
         });
+    }
+
+    /**
+     * @test
+     */
+    public function testWorkflowGuardEventsBlockTransition()
+    {
+        $config = [
+            'straight' => [
+                'supports' => [TestObject::class],
+                'places' => ['a', 'b', 'c'],
+                'transitions' => [
+                    't1' => [
+                        'from' => 'a',
+                        'to' => 'b',
+                    ],
+                    't2' => [
+                        'from' => 'b',
+                        'to' => 'c',
+                    ],
+                ],
+            ],
+        ];
+
+        $registry = new WorkflowRegistry($config, null, $this->app->make(EventsDispatcher::class));
+        $object = new TestObject();
+        $workflow = $registry->get($object);
+
+        Event::listen('workflow.straight.guard.t1', function ($event) {
+            $event->setBlocked(true);
+        });
+
+        $this->assertFalse($workflow->can($object, 't1'));
+
+        $this->expectException(NotEnabledTransitionException::class);
+        $workflow->apply($object, 't1');
     }
 
     private function assertEventSetDispatched(string $eventSet, ?string $arg = null, bool $expected = true)
