@@ -13,6 +13,7 @@ use Symfony\Component\Workflow\TransitionBlockerList;
 use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
 use ZeroDaHero\LaravelWorkflow\Facades\WorkflowFacade;
 use ZeroDaHero\LaravelWorkflow\WorkflowServiceProvider;
+use Symfony\Component\Workflow\Event\GuardEvent as SymfonyGuardEvent;
 
 /**
  * @group integration
@@ -38,6 +39,8 @@ class EventTest extends TestCase
 
         $unserialized = unserialize($serialized);
         $this->assertInstanceOf(TransitionEvent::class, $unserialized);
+
+        $this->assertEquals($subject, $unserialized->getSubject());
     }
 
     /**
@@ -61,6 +64,26 @@ class EventTest extends TestCase
 
         // Attempt a proxy method
         $this->assertInstanceOf(TransitionBlockerList::class, $unserialized->getTransitionBlockerList());
+    }
+
+    /**
+     * @test
+     */
+    public function testGuardEventGuards()
+    {
+        $subject = new TestModel();
+        $symfonyEvent = new SymfonyGuardEvent(
+            $subject,
+            new \Symfony\Component\Workflow\Marking(['here' => 1]),
+            new \Symfony\Component\Workflow\Transition('transition_name', 'here', 'there'),
+            Workflow::get($subject, 'straight')
+        );
+
+        $event = GuardEvent::newFromBase($symfonyEvent);
+
+        $event->setBlocked(true);
+
+        $this->assertTrue($event->isBlocked());
     }
 
     /**

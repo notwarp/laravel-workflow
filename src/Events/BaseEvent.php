@@ -3,7 +3,6 @@
 namespace ZeroDaHero\LaravelWorkflow\Events;
 
 use Workflow;
-use Serializable;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -14,7 +13,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @method string getWorkflowName()
  * @method mixed getMetadata(string $key, $subject)
  */
-abstract class BaseEvent extends Event implements Serializable
+abstract class BaseEvent extends Event
 {
     public function __serialize(): array
     {
@@ -31,21 +30,13 @@ abstract class BaseEvent extends Event implements Serializable
 
     public function __unserialize(array $data): void
     {
-        $this->subject = $data['subject'];
-        $this->marking = $data['marking'];
-        $this->transition = $data['transition'] ?? null;
         $workflowName = $data['workflow']['name'] ?? null;
-        $this->workflow = Workflow::get($this->subject, $workflowName);
-    }
-
-    public function serialize()
-    {
-        return serialize($this->__serialize());
-    }
-
-    public function unserialize($serialized)
-    {
-        $this->__unserialize(unserialize($serialized));
+        parent::__construct(
+            $data['subject'],
+            $data['marking'],
+            $data['transition'],
+            Workflow::get($data['subject'], $workflowName)
+        );
     }
 
     /**

@@ -36,6 +36,12 @@ class GuardEvent extends BaseEvent
     {
         parent::__unserialize($data);
 
-        $this->symfonyProxyEvent = new SymfonyGuardEvent($this->subject, $this->marking, $this->transition, $this->workflow);
+        $this->symfonyProxyEvent = new SymfonyGuardEvent(
+            $this->getSubject(),
+            $this->getMarking(),
+            $this->getTransition(),
+            $this->getWorkflow(),
+            $this->getContext()
+        );
     }
 }
