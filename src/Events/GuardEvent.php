@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Events;
+namespace LucaTerribili\LaravelWorkflow\Events;
 
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Transition;

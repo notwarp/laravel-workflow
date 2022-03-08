@@ -1,19 +1,13 @@
-# Laravel workflow [![Build Status](https://travis-ci.com/zerodahero/laravel-workflow.svg?branch=develop)](https://travis-ci.org/zerodahero/laravel-workflow)
+# Laravel workflow [![Build Status](https://travis-ci.com/lucaterribili/laravel-workflow.svg?branch=develop)](https://travis-ci.org/lucaterribili/laravel-workflow)
 
-## :warning: Looking for help maintaining!
-
-It's been several years since I've actually used this package in a project. It's relatively low maintenance since it's mostly just an adapter for the Symfony component. It's been harder and harder to find time to spend on this project, so I'm looking for help in maintaining it, or if there's a good fit, to take over the package entirely.
-
----
-
-This is a fork from [brexis/laravel-workflow](https://github.com/brexis/laravel-workflow). My current needs for this package are a bit more bleeding-edge than seem to be maintainable by the other packages. Massive kudos to brexis for the original work and adaptation on this.
+This is a fork from [zerodahero/laravel-workflow](https://github.com/zerodahero/laravel-workflow). My current needs for this package are a bit more bleeding-edge than seem to be maintainable by the other packages. Massive kudos to brexis for the original work and adaptation on this.
 
 Use the Symfony Workflow component in Laravel
 
 ## Installation
 
 ```bash
-composer require zerodahero/laravel-workflow
+composer require lucaterribili/laravel-workflow
 ```
 
 ## Laravel Support
@@ -48,7 +42,7 @@ Add a ServiceProvider to your providers array in `config/app.php`:
 
 'providers' => [
     ...
-    ZeroDaHero\LaravelWorkflow\WorkflowServiceProvider::class,
+    LucaTerribili\LaravelWorkflow\WorkflowServiceProvider::class,
 
 ]
 ```
@@ -58,15 +52,17 @@ Add the `Workflow` facade to your facades array:
 ```php
 <?php
     ...
-    'Workflow' => ZeroDaHero\LaravelWorkflow\Facades\WorkflowFacade::class,
+    'Workflow' => LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade::class,
 ```
 
 ## Configuration
 
+Laravel v < 9.0
+
 Publish the config file
 
 ```bash
-php artisan vendor:publish --provider="ZeroDaHero\LaravelWorkflow\WorkflowServiceProvider"
+php artisan vendor:publish --provider="LucaTerribili\LaravelWorkflow\WorkflowServiceProvider"
 ```
 
 Configure your workflow in `config/workflow.php`
@@ -202,7 +198,44 @@ return [
     ]
 ];
 ```
+Laravel v >= 9.*
 
+From Laravel 9 we don't use configuration. You need store your workflows inside Database. We have two tables: Workflow and Transitions
+
+Models are inside package, but you can override these change configuration files
+
+```php
+<?php
+
+return [
+    'models' => [
+        'workflow' => LucaTerribili\LaravelWorkflow\Models\Workflow::class,
+        'transition' => LucaTerribili\LaravelWorkflow\Models\Transition::class,
+    ],
+];
+```
+
+Example of Record for Workflow Table
+```php
+$workflows = array(
+array('id' => '1','name' => 'MacroTicket a progetto','supports' => '["App\\\\Models\\\\MacroTicketProject"]','places' => '[{"name": "unplannable", "sort": 0, "label": "Non pianificabile"}, {"name": "waiting_plane", "sort": 1, "label": "In attesa pianificazione"}, {"name": "new_plane", "sort": 2, "label": "Da ripianificare"}, {"name": "waiting_plane_accept", "sort": 3, "label": "In attesa accettazione pianificazione"}, {"name": "planned", "sort": 4, "label": "Pianificato"}, {"name": "approved", "sort": 5, "label": "Approvato"}, {"name": "bonded", "sort": 6, "label": "Vincolato"}, {"name": "partial_migrated", "sort": 7, "label": "Migrato parziale"}, {"name": "tested", "sort": 8, "label": "Collaudato"}, {"name": "deleted", "sort": 9, "label": "Annullato"}]','start_place' => 'unplannable','final_place' => 'tested','last_places' => '["tested", "deleted"]','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29')
+);
+```
+Example of Records for Transitions Table
+```php
+$transitions = array(
+array('id' => '1','workflow_id' => '1','name' => 'to_waiting_plane','label' => 'Pianifica','from' => '["unplannable"]','to' => 'waiting_plane','permission' => 'be.workflow.macro_ticket.waiting_plane','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '2','workflow_id' => '1','name' => 'to_ask_approved','label' => 'Manda in approvazione','from' => '["waiting_plane", "new_plane"]','to' => 'waiting_plane_accept','permission' => 'be.workflow.macro_ticket.waiting_plane_accept','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '3','workflow_id' => '1','name' => 'to_replane','label' => 'Rifiuta','from' => '["waiting_plane_accept"]','to' => 'new_plane','permission' => 'be.workflow.macro_ticket.to_replane','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '4','workflow_id' => '1','name' => 'to_planned','label' => 'Approva pianificazione','from' => '["waiting_plane_accept"]','to' => 'planned','permission' => 'be.workflow.macro_ticket.to_planned','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '5','workflow_id' => '1','name' => 'to_reject','label' => 'Anulla pianificazione','from' => '["planned"]','to' => 'new_plane','permission' => 'be.workflow.macro_ticket.to_reject','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '6','workflow_id' => '1','name' => 'to_approved','label' => 'Approva intervento','from' => '["planned"]','to' => 'approved','permission' => 'be.workflow.macro_ticket.to_approved','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '7','workflow_id' => '1','name' => 'to_bonded','label' => 'Vincola','from' => '["approved"]','to' => 'bonded','permission' => 'be.workflow.macro_ticket.to_bonded','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '8','workflow_id' => '1','name' => 'from_bonded_to_replane','label' => 'Rimuovi vincoli','from' => '["bonded"]','to' => 'new_plane','permission' => 'be.workflow.macro_ticket.to_replane','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '9','workflow_id' => '1','name' => 'delete','label' => 'Annulla','from' => '["unplannable", "waiting_plane", "new_plane", "waiting_plane_accept", "planned", "approved", "bonded", "partial_migrated", "tested"]','to' => 'deleted','permission' => 'be.workflow.macro_ticket.delete','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29'),
+array('id' => '10','workflow_id' => '1','name' => 'to_tested','label' => 'Collauda','from' => '["approved"]','to' => 'tested','permission' => 'be.workflow.macro_ticket.to_tested','created_at' => '2022-03-07 11:17:29','updated_at' => '2022-03-07 11:17:29')
+);
+```
 Use the `WorkflowTrait` inside supported classes
 
 ```php
@@ -211,7 +244,7 @@ Use the `WorkflowTrait` inside supported classes
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use ZeroDaHero\LaravelWorkflow\Traits\WorkflowTrait;
+use LucaTerribili\LaravelWorkflow\Traits\WorkflowTrait;
 
 class BlogPost extends Model
 {
@@ -292,11 +325,11 @@ $otherPlaceMetadata = $workflow->getMetadataStore()->getMetadata('max_num_of_wor
 This package provides a list of events fired during a transition
 
 ```php
-    ZeroDaHero\LaravelWorkflow\Events\Guard
-    ZeroDaHero\LaravelWorkflow\Events\Leave
-    ZeroDaHero\LaravelWorkflow\Events\Transition
-    ZeroDaHero\LaravelWorkflow\Events\Enter
-    ZeroDaHero\LaravelWorkflow\Events\Entered
+    LucaTerribili\LaravelWorkflow\Events\Guard
+    LucaTerribili\LaravelWorkflow\Events\Leave
+    LucaTerribili\LaravelWorkflow\Events\Transition
+    LucaTerribili\LaravelWorkflow\Events\Enter
+    LucaTerribili\LaravelWorkflow\Events\Entered
 ```
 
 You are encouraged to use [Symfony's dot syntax style of event emission](https://symfony.com/doc/current/workflow.html#using-events), as this provides the best level of precision for listening to events and prevents receiving the same event class multiple times for the "same" event. The workflow component dispatches multiple events per workflow event, and the translation into Laravel events can cause "duplicate" events to be listened to if you only listen by class name.
@@ -308,7 +341,7 @@ NOTE: these events receive the Symfony event prior to version 3.1.1, and will re
 
 namespace App\Listeners;
 
-use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
+use LucaTerribili\LaravelWorkflow\Events\GuardEvent;
 
 class BlogPostWorkflowSubscriber
 {
@@ -388,7 +421,7 @@ You can subscribe to events in a more typical Laravel-style, although this is no
 
 namespace App\Listeners;
 
-use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
+use LucaTerribili\LaravelWorkflow\Events\GuardEvent;
 
 class BlogPostWorkflowSubscriber
 {
@@ -444,27 +477,27 @@ class BlogPostWorkflowSubscriber
     public function subscribe($events)
     {
         $events->listen(
-            'ZeroDaHero\LaravelWorkflow\Events\GuardEvent',
+            'LucaTerribili\LaravelWorkflow\Events\GuardEvent',
             'App\Listeners\BlogPostWorkflowSubscriber@onGuard'
         );
 
         $events->listen(
-            'ZeroDaHero\LaravelWorkflow\Events\LeaveEvent',
+            'LucaTerribili\LaravelWorkflow\Events\LeaveEvent',
             'App\Listeners\BlogPostWorkflowSubscriber@onLeave'
         );
 
         $events->listen(
-            'ZeroDaHero\LaravelWorkflow\Events\TransitionEvent',
+            'LucaTerribili\LaravelWorkflow\Events\TransitionEvent',
             'App\Listeners\BlogPostWorkflowSubscriber@onTransition'
         );
 
         $events->listen(
-            'ZeroDaHero\LaravelWorkflow\Events\EnterEvent',
+            'LucaTerribili\LaravelWorkflow\Events\EnterEvent',
             'App\Listeners\BlogPostWorkflowSubscriber@onEnter'
         );
 
         $events->listen(
-            'ZeroDaHero\LaravelWorkflow\Events\EnteredEvent',
+            'LucaTerribili\LaravelWorkflow\Events\EnteredEvent',
             'App\Listeners\BlogPostWorkflowSubscriber@onEntered'
         );
     }

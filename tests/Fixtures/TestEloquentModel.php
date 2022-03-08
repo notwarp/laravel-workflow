@@ -3,7 +3,7 @@
 namespace Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Model;
-use ZeroDaHero\LaravelWorkflow\Traits\WorkflowTrait;
+use LucaTerribili\LaravelWorkflow\Traits\WorkflowTrait;
 
 class TestEloquentModel extends Model
 {

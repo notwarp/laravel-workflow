@@ -1,19 +1,8 @@
 <?php
 
 return [
-    'straight' => [
-        'type' => 'state_machine',
-        'supports' => ['stdClass'],
-        'places' => ['a', 'b', 'c'],
-        'transitions' => [
-            't1' => [
-                'from' => 'a',
-                'to' => 'b',
-            ],
-            't2' => [
-                'from' => 'b',
-                'to' => 'c',
-            ],
-        ],
+    'models' => [
+        'workflow' => LucaTerribili\LaravelWorkflow\Models\Workflow::class,
+        'transition' => LucaTerribili\LaravelWorkflow\Models\Transition::class,
     ],
 ];
