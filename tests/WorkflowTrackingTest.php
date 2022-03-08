@@ -5,9 +5,9 @@ namespace Tests;
 use Tests\Fixtures\TestObject;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Events\Dispatcher;
-use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
-use ZeroDaHero\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
-use ZeroDaHero\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
+use LucaTerribili\LaravelWorkflow\WorkflowRegistry;
+use LucaTerribili\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
+use LucaTerribili\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
 
 class WorkflowTrackingTest extends TestCase
 {

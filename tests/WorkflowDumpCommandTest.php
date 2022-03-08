@@ -4,7 +4,7 @@ namespace Tests;
 
 use Mockery;
 use Illuminate\Support\Facades\Storage;
-use ZeroDaHero\LaravelWorkflow\Commands\WorkflowDumpCommand;
+use LucaTerribili\LaravelWorkflow\Commands\WorkflowDumpCommand;
 
 class WorkflowDumpCommandTest extends BaseWorkflowTestCase
 {

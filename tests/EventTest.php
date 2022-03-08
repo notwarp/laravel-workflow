@@ -8,11 +8,11 @@ use Tests\Fixtures\TestModel;
 use Orchestra\Testbench\TestCase;
 use Tests\Fixtures\TestEloquentModel;
 use Tests\Fixtures\TestWorkflowListener;
-use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
+use LucaTerribili\LaravelWorkflow\Events\GuardEvent;
 use Symfony\Component\Workflow\TransitionBlockerList;
-use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
-use ZeroDaHero\LaravelWorkflow\Facades\WorkflowFacade;
-use ZeroDaHero\LaravelWorkflow\WorkflowServiceProvider;
+use LucaTerribili\LaravelWorkflow\Events\TransitionEvent;
+use LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade;
+use LucaTerribili\LaravelWorkflow\WorkflowServiceProvider;
 use Symfony\Component\Workflow\Event\GuardEvent as SymfonyGuardEvent;
 
 /**

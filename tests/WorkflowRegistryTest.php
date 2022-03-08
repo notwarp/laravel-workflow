@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Event;
 use Tests\Helpers\CanAccessProtected;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\StateMachine;
-use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
+use LucaTerribili\LaravelWorkflow\WorkflowRegistry;
 use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
-use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
+use LucaTerribili\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
 
 class WorkflowRegistryTest extends BaseWorkflowTestCase
 {

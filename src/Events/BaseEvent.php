@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Events;
+namespace LucaTerribili\LaravelWorkflow\Events;
 
 use Workflow;
 use Symfony\Component\Workflow\Event\Event;

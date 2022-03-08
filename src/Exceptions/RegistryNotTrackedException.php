@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Exceptions;
+namespace LucaTerribili\LaravelWorkflow\Exceptions;
 
 class RegistryNotTrackedException extends \Exception
 {

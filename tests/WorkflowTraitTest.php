@@ -3,8 +3,8 @@
 namespace Tests;
 
 use Mockery;
-use ZeroDaHero\LaravelWorkflow\WorkflowRegistry;
-use ZeroDaHero\LaravelWorkflow\Traits\WorkflowTrait;
+use LucaTerribili\LaravelWorkflow\WorkflowRegistry;
+use LucaTerribili\LaravelWorkflow\Traits\WorkflowTrait;
 use Symfony\Component\Workflow\Workflow as SymfonyWorkflow;
 
 class WorkflowTraitTest extends BaseWorkflowTestCase

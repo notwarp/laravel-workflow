@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Events;
+namespace LucaTerribili\LaravelWorkflow\Events;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

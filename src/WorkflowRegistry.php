@@ -1,22 +1,23 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow;
+namespace LucaTerribili\LaravelWorkflow;
 
+use Illuminate\Support\Arr;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\DefinitionBuilder;
-use ZeroDaHero\LaravelWorkflow\Events\DispatcherAdapter;
+use LucaTerribili\LaravelWorkflow\Events\DispatcherAdapter;
 use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
-use ZeroDaHero\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
-use ZeroDaHero\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
-use ZeroDaHero\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
+use LucaTerribili\LaravelWorkflow\MarkingStores\EloquentMarkingStore;
+use LucaTerribili\LaravelWorkflow\Exceptions\DuplicateWorkflowException;
+use LucaTerribili\LaravelWorkflow\Exceptions\RegistryNotTrackedException;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 
 class WorkflowRegistry
@@ -30,6 +31,19 @@ class WorkflowRegistry
      * @var array
      */
     protected $config;
+
+    /**
+     * @var
+     */
+    protected $db_workflows;
+    /**
+     * @var
+     */
+    protected $current_workflow;
+    /**
+     * @var
+     */
+    protected $current_class;
 
     /**
      * @var array
@@ -61,12 +75,59 @@ class WorkflowRegistry
     {
         $this->registry = new Registry();
         $this->config = $config;
+        $this->db_workflows = $this->__loadAllWorkflow();
         $this->registryConfig = $registryConfig ?? $this->getDefaultRegistryConfig();
         $this->dispatcher = new DispatcherAdapter($laravelDispatcher);
-
-        foreach ($this->config as $name => $workflowData) {
+        foreach ($this->db_workflows as $name => $workflowData) {
             $this->addFromArray($name, $workflowData);
         }
+    }
+
+    /**
+     * @return array
+     */
+    private function __loadAllWorkflow()
+    {
+        $workflows = $this->config['models']['workflow']::with('transitions')->get();
+        $array_workflow = [];
+        foreach ($workflows as $workflow) {
+            $array_workflow[$workflow->name] = [
+                'type' => 'workflow',
+                'marking_store' => [
+                    'type' => 'single_state',
+                    'property' => 'status'
+                ],
+                'name' => $workflow->name,
+                'supports' => $workflow->supports,
+                'places' => $this->createPlace($workflow),
+                'transitions' => []
+            ];
+            foreach ($workflow->transitions as $transition) {
+                $array_workflow[$workflow->name]['transitions'][$transition->name] = [
+                    'from' => $transition->from,
+                    'to' => $transition->to,
+                    'permission' => $transition->permission
+                ];
+            }
+        }
+        return $array_workflow;
+    }
+
+    /**
+     * @param $places
+     * @return mixed[]
+     */
+    protected function createPlace($workflow)
+    {
+        $workflow_places = $workflow->getAllStatusAttribute(false);
+        $start_label = array_search($workflow->start_place, $workflow_places);
+        $places = [$start_label => $workflow->start_place];
+        foreach ($workflow_places as $label => $place) {
+            if (!in_array($place, $places)) {
+                $places[$label] = $place;
+            }
+        }
+        return $places;
     }
 
     /**
@@ -79,7 +140,41 @@ class WorkflowRegistry
      */
     public function get($subject, $workflowName = null)
     {
+        if (is_null($workflowName)) {
+            $workflowName = $this->getWorkflowName($subject);
+        }
         return $this->registry->get($subject, $workflowName);
+    }
+
+    public function load($class, $workflow_name = null)
+    {
+        $this->currentClass = $class;
+        $workflow_scope = collect($this->db_workflows)->filter(callback: function ($workflow, $name) use ($workflow_name) {
+            if ($workflow_name) {
+                return in_array(get_class($this->currentClass), $workflow['supports']) && $workflow_name === $name;
+            } else {
+                return in_array(get_class($this->currentClass), $workflow['supports']);
+            }
+        })->first();
+        if (!$workflow_scope) {
+            throw new \Exception('Non esiste un Workflow valido per questa richiesta');
+        }
+        $this->current_workflow = $workflow_scope;
+        //$this->current_class = $this->get($class, array_search($workflow_scope, $this->db_workflows));
+        return $this;
+    }
+
+    /**
+     * @param $subejct
+     * @return int|string|null
+     */
+    protected function getWorkflowName($subejct)
+    {
+        $class_name = get_class($subejct);
+        $workflow_name = Arr::where($this->db_workflows, function ($arr) use ($class_name) {
+            return in_array($class_name, $arr['supports']);
+        });
+        return key($workflow_name);
     }
 
     /**
@@ -337,7 +432,6 @@ class WorkflowRegistry
             $metadata['workflow'] = $workflowData['metadata'];
             unset($workflowData['metadata']);
         }
-
         foreach ($workflowData['places'] as $key => &$place) {
             if (is_int($key) && ! is_array($place)) {
                 // no metadata, just place name
@@ -357,5 +451,15 @@ class WorkflowRegistry
         }
 
         return $metadata;
+    }
+
+    /**
+     * @param $obejct
+     * @return false|int|string
+     */
+    public function getLabelStatus($obejct)
+    {
+        $property = $this->current_workflow['marking_store']['property'];
+        return array_search($obejct->$property, $this->current_workflow['places']) ?: '';
     }
 }

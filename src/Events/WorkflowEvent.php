@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Events;
+namespace LucaTerribili\LaravelWorkflow\Events;
 
 class WorkflowEvent extends BaseEvent
 {

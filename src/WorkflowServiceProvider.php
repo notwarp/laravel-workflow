@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow;
+namespace LucaTerribili\LaravelWorkflow;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 class WorkflowServiceProvider extends ServiceProvider
 {
     protected $commands = [
-        'ZeroDaHero\LaravelWorkflow\Commands\WorkflowDumpCommand',
+        'LucaTerribili\LaravelWorkflow\Commands\WorkflowDumpCommand',
     ];
 
     /**
@@ -19,11 +19,14 @@ class WorkflowServiceProvider extends ServiceProvider
     public function boot()
     {
         $configPath = $this->configPath();
-
+        $databasePath = $this->databasePath();
         $this->publishes([
             "${configPath}/workflow.php" => $this->publishPath('workflow.php'),
             "${configPath}/workflow_registry.php" => $this->publishPath('workflow_registry.php'),
         ], 'config');
+        $this->publishes([
+            "${databasePath}/migrations/" => database_path('migrations'),
+        ], 'migrations');
     }
 
     /**
@@ -43,7 +46,6 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->app->singleton('workflow', function ($app) {
             $workflowConfigs = $app->make('config')->get('workflow', []);
             $registryConfig = $app->make('config')->get('workflow_registry');
-
             return new WorkflowRegistry($workflowConfigs, $registryConfig, $app->make(Dispatcher::class));
         });
     }
@@ -58,9 +60,20 @@ class WorkflowServiceProvider extends ServiceProvider
         return ['workflow'];
     }
 
+    /**
+     * @return string
+     */
     protected function configPath()
     {
         return __DIR__ . '/../config';
+    }
+
+    /**
+     * @return string
+     */
+    protected function databasePath()
+    {
+        return __DIR__ . '/../database';
     }
 
     protected function publishPath($configFile)

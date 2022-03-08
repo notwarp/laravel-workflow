@@ -1,5 +1,5 @@
 {
-    "name": "zerodahero/laravel-workflow",
+    "name": "lucaterribili/laravel-workflow",
     "description": "Integerate Symfony Workflow component into Laravel.",
     "keywords": ["workflow", "symfony", "laravel", "laravel7", "laravel8"],
     "license": "MIT",
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ZeroDaHero\\LaravelWorkflow\\": "src/"
+            "LucaTerribili\\LaravelWorkflow\\": "src/"
         }
     },
     "autoload-dev": {
@@ -28,10 +28,10 @@
         },
         "laravel": {
             "providers": [
-                "ZeroDaHero\\LaravelWorkflow\\WorkflowServiceProvider"
+                "LucaTerribili\\LaravelWorkflow\\WorkflowServiceProvider"
             ],
             "aliases": {
-                "Workflow": "ZeroDaHero\\LaravelWorkflow\\Facades\\WorkflowFacade"
+                "Workflow": "LucaTerribili\\LaravelWorkflow\\Facades\\WorkflowFacade"
             }
         }
     },

@@ -10,18 +10,18 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\Transition;
 use Illuminate\Contracts\Events\Dispatcher;
-use ZeroDaHero\LaravelWorkflow\Events\BaseEvent;
+use LucaTerribili\LaravelWorkflow\Events\BaseEvent;
 use Symfony\Component\Workflow\WorkflowInterface;
-use ZeroDaHero\LaravelWorkflow\Events\EnterEvent;
-use ZeroDaHero\LaravelWorkflow\Events\GuardEvent;
-use ZeroDaHero\LaravelWorkflow\Events\LeaveEvent;
-use ZeroDaHero\LaravelWorkflow\Events\EnteredEvent;
-use ZeroDaHero\LaravelWorkflow\Events\AnnounceEvent;
-use ZeroDaHero\LaravelWorkflow\Events\WorkflowEvent;
-use ZeroDaHero\LaravelWorkflow\Events\CompletedEvent;
+use LucaTerribili\LaravelWorkflow\Events\EnterEvent;
+use LucaTerribili\LaravelWorkflow\Events\GuardEvent;
+use LucaTerribili\LaravelWorkflow\Events\LeaveEvent;
+use LucaTerribili\LaravelWorkflow\Events\EnteredEvent;
+use LucaTerribili\LaravelWorkflow\Events\AnnounceEvent;
+use LucaTerribili\LaravelWorkflow\Events\WorkflowEvent;
+use LucaTerribili\LaravelWorkflow\Events\CompletedEvent;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use ZeroDaHero\LaravelWorkflow\Events\TransitionEvent;
-use ZeroDaHero\LaravelWorkflow\Events\DispatcherAdapter;
+use LucaTerribili\LaravelWorkflow\Events\TransitionEvent;
+use LucaTerribili\LaravelWorkflow\Events\DispatcherAdapter;
 
 class DispatchAdapterTest extends TestCase
 {
