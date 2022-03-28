@@ -1,8 +1,7 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow\Exceptions;
+namespace LucaTerribili\LaravelWorkflow\Exceptions;
 
 class DuplicateWorkflowException extends \Exception
 {
-    //
 }

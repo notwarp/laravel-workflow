@@ -1,16 +1,14 @@
 <?php
 
-namespace ZeroDaHero\LaravelWorkflow;
+namespace LucaTerribili\LaravelWorkflow;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Events\Dispatcher;
 
-/**
- * @author Boris Koumondji <brexis@yahoo.fr>
- */
 class WorkflowServiceProvider extends ServiceProvider
 {
     protected $commands = [
-        'ZeroDaHero\LaravelWorkflow\Commands\WorkflowDumpCommand',
+        'LucaTerribili\LaravelWorkflow\Commands\WorkflowDumpCommand',
     ];
 
     /**
@@ -21,11 +19,14 @@ class WorkflowServiceProvider extends ServiceProvider
     public function boot()
     {
         $configPath = $this->configPath();
-
+        $databasePath = $this->databasePath();
         $this->publishes([
-            "${configPath}/workflow.php" => config_path('workflow.php'),
-            "${configPath}/workflow_registry.php" => config_path('workflow_registry.php')
+            "${configPath}/workflow.php" => $this->publishPath('workflow.php'),
+            "${configPath}/workflow_registry.php" => $this->publishPath('workflow_registry.php'),
         ], 'config');
+        $this->publishes([
+            "${databasePath}/migrations/" => database_path('migrations'),
+        ], 'migrations');
     }
 
     /**
@@ -43,15 +44,10 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->commands($this->commands);
 
         $this->app->singleton('workflow', function ($app) {
-            $workflowConfigs = $app->make('config')->get('workflow');
+            $workflowConfigs = $app->make('config')->get('workflow', []);
             $registryConfig = $app->make('config')->get('workflow_registry');
-            return new WorkflowRegistry($workflowConfigs, $registryConfig);
+            return new WorkflowRegistry($workflowConfigs, $registryConfig, $app->make(Dispatcher::class));
         });
-    }
-
-    protected function configPath()
-    {
-        return __DIR__ . '/../config';
     }
 
     /**
@@ -62,5 +58,28 @@ class WorkflowServiceProvider extends ServiceProvider
     public function provides()
     {
         return ['workflow'];
+    }
+
+    /**
+     * @return string
+     */
+    protected function configPath()
+    {
+        return __DIR__ . '/../config';
+    }
+
+    /**
+     * @return string
+     */
+    protected function databasePath()
+    {
+        return __DIR__ . '/../database';
+    }
+
+    protected function publishPath($configFile)
+    {
+        return (function_exists('config_path'))
+            ? config_path($configFile)
+            : base_path('config/' . $configFile);
     }
 }
