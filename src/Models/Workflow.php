@@ -2,7 +2,9 @@
 
 namespace LucaTerribili\LaravelWorkflow\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Workflow extends Model
 {
@@ -38,12 +40,21 @@ class Workflow extends Model
     public function getAllStatusAttribute($flat = false)
     {
         if ($flat) {
-            return collect($this->places)->map(function ($place) {
-                return collect($place)->only('name')->flatten()->toArray();
-            })->flatten()->toArray();
+            return collect($this->places)->map(callback: fn ($place) => collect($place)->only('name')->flatten()->toArray())->flatten()->toArray();
         } else {
             return collect($this->places)->pluck('name', 'label')->toArray();
         }
+    }
 
+    /**
+     * @return mixed[]
+     */
+    public function getFromStatusAttribute()
+    {
+        $status = collect($this->places)->pluck('label', 'name')->toArray();
+        foreach ($this->last_places as $place) {
+            Arr::pull($status, $place);
+        }
+        return $status;
     }
 }
