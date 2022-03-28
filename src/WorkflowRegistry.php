@@ -36,10 +36,12 @@ class WorkflowRegistry
      * @var
      */
     protected $db_workflows;
+
     /**
      * @var
      */
     protected $current_workflow;
+
     /**
      * @var
      */
@@ -78,56 +80,10 @@ class WorkflowRegistry
         $this->db_workflows = $this->__loadAllWorkflow();
         $this->registryConfig = $registryConfig ?? $this->getDefaultRegistryConfig();
         $this->dispatcher = new DispatcherAdapter($laravelDispatcher);
+
         foreach ($this->db_workflows as $name => $workflowData) {
             $this->addFromArray($name, $workflowData);
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function __loadAllWorkflow()
-    {
-        $workflows = $this->config['models']['workflow']::with('transitions')->get();
-        $array_workflow = [];
-        foreach ($workflows as $workflow) {
-            $array_workflow[$workflow->name] = [
-                'type' => 'workflow',
-                'marking_store' => [
-                    'type' => 'single_state',
-                    'property' => 'status'
-                ],
-                'name' => $workflow->name,
-                'supports' => $workflow->supports,
-                'places' => $this->createPlace($workflow),
-                'transitions' => []
-            ];
-            foreach ($workflow->transitions as $transition) {
-                $array_workflow[$workflow->name]['transitions'][$transition->name] = [
-                    'from' => $transition->from,
-                    'to' => $transition->to,
-                    'permission' => $transition->permission
-                ];
-            }
-        }
-        return $array_workflow;
-    }
-
-    /**
-     * @param $places
-     * @return mixed[]
-     */
-    protected function createPlace($workflow)
-    {
-        $workflow_places = $workflow->getAllStatusAttribute(false);
-        $start_label = array_search($workflow->start_place, $workflow_places);
-        $places = [$start_label => $workflow->start_place];
-        foreach ($workflow_places as $label => $place) {
-            if (!in_array($place, $places)) {
-                $places[$label] = $place;
-            }
-        }
-        return $places;
     }
 
     /**
@@ -143,6 +99,7 @@ class WorkflowRegistry
         if (is_null($workflowName)) {
             $workflowName = $this->getWorkflowName($subject);
         }
+
         return $this->registry->get($subject, $workflowName);
     }
 
@@ -156,25 +113,13 @@ class WorkflowRegistry
                 return in_array(get_class($this->currentClass), $workflow['supports']);
             }
         })->first();
-        if (!$workflow_scope) {
+
+        if (! $workflow_scope) {
             throw new \Exception('Non esiste un Workflow valido per questa richiesta');
         }
         $this->current_workflow = $workflow_scope;
         //$this->current_class = $this->get($class, array_search($workflow_scope, $this->db_workflows));
         return $this;
-    }
-
-    /**
-     * @param $subejct
-     * @return int|string|null
-     */
-    protected function getWorkflowName($subejct)
-    {
-        $class_name = get_class($subejct);
-        $workflow_name = Arr::where($this->db_workflows, function ($arr) use ($class_name) {
-            return in_array($class_name, $arr['supports']);
-        });
-        return key($workflow_name);
     }
 
     /**
@@ -279,6 +224,54 @@ class WorkflowRegistry
         foreach ($workflowData['supports'] as $supportedClass) {
             $this->add($workflow, $supportedClass);
         }
+    }
+
+    /**
+     * @param $obejct
+     *
+     * @return false|int|string
+     */
+    public function getLabelStatus($obejct)
+    {
+        $property = $this->current_workflow['marking_store']['property'];
+
+        return array_search($obejct->$property, $this->current_workflow['places']) ?: '';
+    }
+
+    /**
+     * @param $places
+     * @param mixed $workflow
+     *
+     * @return mixed[]
+     */
+    protected function createPlace($workflow)
+    {
+        $workflow_places = $workflow->getAllStatusAttribute(false);
+        $start_label = array_search($workflow->start_place, $workflow_places);
+        $places = [$start_label => $workflow->start_place];
+
+        foreach ($workflow_places as $label => $place) {
+            if (! in_array($place, $places)) {
+                $places[$label] = $place;
+            }
+        }
+
+        return $places;
+    }
+
+    /**
+     * @param $subejct
+     *
+     * @return int|string|null
+     */
+    protected function getWorkflowName($subejct)
+    {
+        $class_name = get_class($subejct);
+        $workflow_name = Arr::where($this->db_workflows, function ($arr) use ($class_name) {
+            return in_array($class_name, $arr['supports']);
+        });
+
+        return key($workflow_name);
     }
 
     /**
@@ -432,6 +425,7 @@ class WorkflowRegistry
             $metadata['workflow'] = $workflowData['metadata'];
             unset($workflowData['metadata']);
         }
+
         foreach ($workflowData['places'] as $key => &$place) {
             if (is_int($key) && ! is_array($place)) {
                 // no metadata, just place name
@@ -454,12 +448,35 @@ class WorkflowRegistry
     }
 
     /**
-     * @param $obejct
-     * @return false|int|string
+     * @return array
      */
-    public function getLabelStatus($obejct)
+    private function __loadAllWorkflow()
     {
-        $property = $this->current_workflow['marking_store']['property'];
-        return array_search($obejct->$property, $this->current_workflow['places']) ?: '';
+        $workflows = $this->config['models']['workflow']::with('transitions')->get();
+        $array_workflow = [];
+
+        foreach ($workflows as $workflow) {
+            $array_workflow[$workflow->name] = [
+                'type' => 'workflow',
+                'marking_store' => [
+                    'type' => 'single_state',
+                    'property' => 'status',
+                ],
+                'name' => $workflow->name,
+                'supports' => $workflow->supports,
+                'places' => $this->createPlace($workflow),
+                'transitions' => [],
+            ];
+
+            foreach ($workflow->transitions as $transition) {
+                $array_workflow[$workflow->name]['transitions'][$transition->name] = [
+                    'from' => $transition->from,
+                    'to' => $transition->to,
+                    'permission' => $transition->permission,
+                ];
+            }
+        }
+
+        return $array_workflow;
     }
 }

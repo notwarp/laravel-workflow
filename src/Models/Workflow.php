@@ -2,9 +2,8 @@
 
 namespace LucaTerribili\LaravelWorkflow\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Model;
 
 class Workflow extends Model
 {
@@ -14,16 +13,8 @@ class Workflow extends Model
     protected $casts = [
         'supports' => 'array',
         'places' => 'array',
-        'last_places' => 'array'
+        'last_places' => 'array',
     ];
-
-    /**
-     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
-     */
-    protected function getTransitionModel()
-    {
-        return config('workflow.models.transition');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -35,6 +26,7 @@ class Workflow extends Model
 
     /**
      * @param $flat
+     *
      * @return mixed[]
      */
     public function getAllStatusAttribute($flat = false)
@@ -52,9 +44,19 @@ class Workflow extends Model
     public function getFromStatusAttribute()
     {
         $status = collect($this->places)->pluck('label', 'name')->toArray();
+
         foreach ($this->last_places as $place) {
             Arr::pull($status, $place);
         }
+
         return $status;
+    }
+
+    /**
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    protected function getTransitionModel()
+    {
+        return config('workflow.models.transition');
     }
 }
