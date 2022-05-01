@@ -10,19 +10,13 @@ class Transition extends Model
      * @var string[]
      */
     protected $casts = [
-        'from' => 'array'
+        'from' => 'array',
     ];
+
     /**
      * @var array
      */
     protected $guarded = [];
-    /**
-     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
-     */
-    protected function getWorkflowModel()
-    {
-        return config('workflow.models.workflow');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -30,5 +24,13 @@ class Transition extends Model
     public function workflow()
     {
         return $this->belongsTo($this->getWorkflowModel());
+    }
+
+    /**
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    protected function getWorkflowModel()
+    {
+        return config('workflow.models.workflow');
     }
 }

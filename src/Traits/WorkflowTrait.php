@@ -4,7 +4,6 @@ namespace LucaTerribili\LaravelWorkflow\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade;
-use Symfony\Component\Workflow\Workflow;
 
 trait WorkflowTrait
 {
@@ -19,12 +18,14 @@ trait WorkflowTrait
             $context = $workflow;
             $workflow = null;
         }
+
         return WorkflowFacade::get($this, $workflow)->apply($this, $transition, $context);
     }
 
     /**
      * @param $transition
      * @param $workflow
+     *
      * @return mixed
      */
     public function workflow_can($transition, $workflow = null)
@@ -34,14 +35,17 @@ trait WorkflowTrait
 
     /**
      * @param $workflow
+     *
      * @return mixed
      */
     public function workflow_transitions($workflow = null)
     {
         return WorkflowFacade::get($this, $workflow)->getEnabledTransitions($this);
     }
+
     /**
      * @param $workflow
+     *
      * @return mixed
      */
     public function getStartStatus($workflow = null)
@@ -56,22 +60,27 @@ trait WorkflowTrait
 
     /**
      * @param $post_action
+     *
      * @return $this
      */
     public function saveStatusToStart($post_action = false)
     {
         $status = $this->getStartStatus();
-        if (!empty($status)) {
+
+        if (! empty($status)) {
             $this->status = $status;
             $this->save();
+
             if ($post_action) {
             }
         }
+
         return $this;
     }
 
     /**
      * @param $transition
+     *
      * @return $this
      */
     public function apply($transition)
@@ -80,6 +89,7 @@ trait WorkflowTrait
             $this->workflow_apply($transition);
             $this->save();
         }
+
         return $this;
     }
 
