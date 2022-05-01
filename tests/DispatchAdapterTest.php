@@ -10,16 +10,16 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\Transition;
 use Illuminate\Contracts\Events\Dispatcher;
-use LucaTerribili\LaravelWorkflow\Events\BaseEvent;
 use Symfony\Component\Workflow\WorkflowInterface;
+use LucaTerribili\LaravelWorkflow\Events\BaseEvent;
 use LucaTerribili\LaravelWorkflow\Events\EnterEvent;
 use LucaTerribili\LaravelWorkflow\Events\GuardEvent;
 use LucaTerribili\LaravelWorkflow\Events\LeaveEvent;
 use LucaTerribili\LaravelWorkflow\Events\EnteredEvent;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use LucaTerribili\LaravelWorkflow\Events\AnnounceEvent;
 use LucaTerribili\LaravelWorkflow\Events\WorkflowEvent;
 use LucaTerribili\LaravelWorkflow\Events\CompletedEvent;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use LucaTerribili\LaravelWorkflow\Events\TransitionEvent;
 use LucaTerribili\LaravelWorkflow\Events\DispatcherAdapter;
 
