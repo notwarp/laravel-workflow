@@ -118,7 +118,7 @@ class WorkflowRegistry
             throw new \Exception('Non esiste un Workflow valido per questa richiesta');
         }
         $this->current_workflow = $workflow_scope;
-        //$this->current_class = $this->get($class, array_search($workflow_scope, $this->db_workflows));
+
         return $this;
     }
 
@@ -236,6 +236,14 @@ class WorkflowRegistry
         $property = $this->current_workflow['marking_store']['property'];
 
         return array_search($obejct->$property, $this->current_workflow['places']) ?: '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastStatus()
+    {
+        return $this->current_workflow['last_places'];
     }
 
     /**
@@ -465,6 +473,8 @@ class WorkflowRegistry
                 'name' => $workflow->name,
                 'supports' => $workflow->supports,
                 'places' => $this->createPlace($workflow),
+                'final_status' => $workflow->final_place,
+                'last_places' => $workflow->last_places,
                 'transitions' => [],
             ];
 
