@@ -478,6 +478,12 @@ class WorkflowRegistry
                 'transitions' => [],
             ];
 
+            if (array_key_exists('extra_fields', $this->config) && is_array($this->config['extra_fields'])) {
+                foreach ($this->config['extra_fields'] as $extra_field) {
+                    $array_workflow[$workflow->name][$extra_field] = $workflow->{$extra_field};
+                }
+            }
+
             foreach ($workflow->transitions as $transition) {
                 $array_workflow[$workflow->name]['transitions'][$transition->name] = [
                     'from' => $transition->from,
