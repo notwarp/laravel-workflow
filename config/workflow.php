@@ -6,5 +6,5 @@ return [
         'transition' => LucaTerribili\LaravelWorkflow\Models\Transition::class,
     ],
     'support_content' => [],
-    'extra_fields' => []
+    'extra_fields' => [],
 ];
