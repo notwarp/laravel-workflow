@@ -3,8 +3,8 @@
 namespace LucaTerribili\LaravelWorkflow\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade;
 use LucaTerribili\LaravelWorkflow\Events\WorkflowStart;
+use LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade;
 
 trait WorkflowTrait
 {
@@ -15,11 +15,13 @@ trait WorkflowTrait
 
     public function workflow_apply($transition, $workflow = null, array $context = [])
     {
-         $workflow = WorkflowFacade::get($this, $workflow);
+        $workflow = WorkflowFacade::get($this, $workflow);
+
         if (is_array($workflow)) {
             $context = $workflow;
             $workflow = null;
         }
+
         return $workflow->apply($this, $transition, $context);
     }
 
