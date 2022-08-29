@@ -456,6 +456,20 @@ class WorkflowRegistry
     }
 
     /**
+     * @param $transition_name
+     *
+     * @return bool
+     */
+    protected function canHelper($transition_name)
+    {
+        if (is_object($this->currentClass) && is_array($this->current_workflow)) {
+            return $this->registry->get($this->currentClass, $this->current_workflow['name'])->can($this->currentClass, $transition_name);
+        }
+
+        return false;
+    }
+
+    /**
      * @return array
      */
     private function __loadAllWorkflow()
@@ -494,17 +508,5 @@ class WorkflowRegistry
         }
 
         return $array_workflow;
-    }
-
-    /**
-     * @param $transition_name
-     * @return bool
-     */
-    protected function canHelper($transition_name)
-    {
-        if(is_object($this->currentClass) && is_array($this->current_workflow)) {
-            return $this->registry->get($this->currentClass, $this->current_workflow['name'])->can($this->currentClass, $transition_name);
-        }
-        return false;
     }
 }

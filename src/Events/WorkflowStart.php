@@ -2,19 +2,23 @@
 
 namespace LucaTerribili\LaravelWorkflow\Events;
 
-use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
 class WorkflowStart
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $model;
 
     /**
      * Create a new event instance.
+     *
+     * @param mixed $model
      *
      * @return void
      */
