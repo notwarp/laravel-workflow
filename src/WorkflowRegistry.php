@@ -476,6 +476,7 @@ class WorkflowRegistry
                 'final_status' => $workflow->final_place,
                 'last_places' => $workflow->last_places,
                 'transitions' => [],
+                'events_to_dispatch' => $this->config['events_to_dispatch'] ?? []
             ];
 
             if (array_key_exists('extra_fields', $this->config) && is_array($this->config['extra_fields'])) {
