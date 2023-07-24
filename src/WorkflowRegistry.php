@@ -274,11 +274,8 @@ class WorkflowRegistry
      */
     protected function getWorkflowName($subejct)
     {
-        $class_name = get_class($subejct);
-        $workflow_name = Arr::where($this->db_workflows, function ($arr) use ($class_name) {
-            return in_array($class_name, $arr['supports']);
-        });
-
+        $class_name = $subejct::class;
+        $workflow_name = Arr::where($this->db_workflows, fn ($arr) => in_array($class_name, $arr['supports']));
         return key($workflow_name);
     }
 
@@ -501,6 +498,7 @@ class WorkflowRegistry
 
             foreach ($workflow->transitions as $transition) {
                 $array_workflow[$workflow->name]['transitions'][$transition->name] = [
+                    'title' => $transition->label,
                     'from' => $transition->from,
                     'to' => $transition->to,
                     'permission' => $transition->permission,
@@ -509,5 +507,19 @@ class WorkflowRegistry
         }
 
         return $array_workflow;
+    }
+
+    public function hasTransition(): bool
+    {
+        if(count($this->current_workflow['transitions']) > 0) {
+            $transitions = array_keys($this->current_workflow['transitions']);
+            return count(Arr::where($transitions, fn ($transition) => $this->get($this->currentClass)->can($this->currentClass, $transition))) > 0;
+        }
+        return false;
+    }
+
+    public function getTransitions(): array
+    {
+        return $this->current_workflow['transitions'];
     }
 }

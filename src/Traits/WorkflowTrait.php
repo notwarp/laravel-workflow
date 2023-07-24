@@ -2,6 +2,8 @@
 
 namespace LucaTerribili\LaravelWorkflow\Traits;
 
+use App\Freedom\Facades\MibacWorkflow;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use LucaTerribili\LaravelWorkflow\Events\WorkflowStart;
 use LucaTerribili\LaravelWorkflow\Facades\WorkflowFacade;
@@ -82,6 +84,23 @@ trait WorkflowTrait
         return $this;
     }
 
+    public function saveStatus(): static
+    {
+        if (request()->has('transition') && request()->filled('transition')) {
+            if ($this->workflow_can(request()->post('transition'))) {
+                $this->workflow_apply(request()->post('transition'));
+            } else {
+                redirect()->back()->withErrors(['Transitions', 'Non è possibile effettuare questa transizione'])->send();
+            }
+        }
+        if (request()->has('published_at') && request()->filled('published_at')) {
+            $this->published_at = request()->post('published_at');
+        }
+        $this->save();
+        return $this;
+
+    }
+
     /**
      * @param $transition
      *
@@ -95,6 +114,24 @@ trait WorkflowTrait
         }
 
         return $this;
+    }
+
+    public function hasTransition()
+    {
+        return WorkflowFacade::hasTransition();
+    }
+
+    public function getTransitions()
+    {
+        $result = [];
+
+        foreach (WorkflowFacade::getTransitions() as $transition_name => $elements) {
+            $result[] = [
+                'name' => $transition_name,
+                'title' => $elements['title']
+            ];
+        }
+        return $result;
     }
 
     /**
