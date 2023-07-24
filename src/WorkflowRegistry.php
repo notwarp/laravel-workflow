@@ -246,6 +246,22 @@ class WorkflowRegistry
         return $this->current_workflow['last_places'];
     }
 
+    public function hasTransition(): bool
+    {
+        if(count($this->current_workflow['transitions']) > 0) {
+            $transitions = array_keys($this->current_workflow['transitions']);
+
+            return count(Arr::where($transitions, fn ($transition) => $this->get($this->currentClass)->can($this->currentClass, $transition))) > 0;
+        }
+
+        return false;
+    }
+
+    public function getTransitions(): array
+    {
+        return $this->current_workflow['transitions'];
+    }
+
     /**
      * @param $places
      * @param mixed $workflow
@@ -276,6 +292,7 @@ class WorkflowRegistry
     {
         $class_name = $subejct::class;
         $workflow_name = Arr::where($this->db_workflows, fn ($arr) => in_array($class_name, $arr['supports']));
+
         return key($workflow_name);
     }
 
@@ -507,19 +524,5 @@ class WorkflowRegistry
         }
 
         return $array_workflow;
-    }
-
-    public function hasTransition(): bool
-    {
-        if(count($this->current_workflow['transitions']) > 0) {
-            $transitions = array_keys($this->current_workflow['transitions']);
-            return count(Arr::where($transitions, fn ($transition) => $this->get($this->currentClass)->can($this->currentClass, $transition))) > 0;
-        }
-        return false;
-    }
-
-    public function getTransitions(): array
-    {
-        return $this->current_workflow['transitions'];
     }
 }
