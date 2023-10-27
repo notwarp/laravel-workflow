@@ -25,17 +25,17 @@ class WorkflowRegistry
     /**
      * @var Registry
      */
-    protected $registry;
+    protected Registry $registry;
 
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var
      */
-    protected $db_workflows;
+    protected array $db_workflows;
 
     /**
      * @var
@@ -68,9 +68,9 @@ class WorkflowRegistry
     /**
      * WorkflowRegistry constructor
      *
-     * @param  array $config
-     * @param  array $registryConfig
-     *
+     * @param array $config
+     * @param array|null $registryConfig
+     * @param EventsDispatcher $laravelDispatcher
      * @throws \ReflectionException
      */
     public function __construct(array $config, array $registryConfig = null, EventsDispatcher $laravelDispatcher)
@@ -94,7 +94,7 @@ class WorkflowRegistry
      *
      * @return Workflow
      */
-    public function get($subject, $workflowName = null)
+    public function get($subject, $workflowName = null): Workflow
     {
         if (is_null($workflowName)) {
             $workflowName = $this->getWorkflowName($subject);
@@ -103,7 +103,10 @@ class WorkflowRegistry
         return $this->registry->get($subject, $workflowName);
     }
 
-    public function load($class, $workflow_name = null)
+    /**
+     * @throws \Exception
+     */
+    public function load($class, $workflow_name = null): static
     {
         $this->currentClass = $class;
         $workflow_scope = collect($this->db_workflows)->filter(callback: function ($workflow, $name) use ($workflow_name) {
@@ -138,9 +141,10 @@ class WorkflowRegistry
      * Add a workflow to the subject
      *
      * @param Workflow $workflow
-     * @param string   $supportStrategy
+     * @param string $supportStrategy
      *
      * @return void
+     * @throws DuplicateWorkflowException
      */
     public function add(Workflow $workflow, $supportStrategy)
     {
@@ -231,7 +235,7 @@ class WorkflowRegistry
      *
      * @return false|int|string
      */
-    public function getLabelStatus($obejct)
+    public function getLabelStatus($obejct): bool|int|string
     {
         $property = $this->current_workflow['marking_store']['property'];
 
@@ -241,9 +245,17 @@ class WorkflowRegistry
     /**
      * @return mixed
      */
-    public function getLastStatus()
+    public function getLastStatus(): mixed
     {
         return $this->current_workflow['last_places'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFinalStatus(): mixed
+    {
+        return $this->current_workflow['final_place'];
     }
 
     public function hasTransition(): bool
