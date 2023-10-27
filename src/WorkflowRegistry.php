@@ -260,7 +260,7 @@ class WorkflowRegistry
      */
     public function getFinalStatus(): mixed
     {
-        return $this->current_workflow['final_place'];
+        return $this->current_workflow['final_status'];
     }
 
     public function hasTransition(): bool
