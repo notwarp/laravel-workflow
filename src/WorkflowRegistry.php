@@ -71,6 +71,7 @@ class WorkflowRegistry
      * @param array $config
      * @param array|null $registryConfig
      * @param EventsDispatcher $laravelDispatcher
+     *
      * @throws \ReflectionException
      */
     public function __construct(array $config, array $registryConfig = null, EventsDispatcher $laravelDispatcher)
@@ -104,6 +105,9 @@ class WorkflowRegistry
     }
 
     /**
+     * @param mixed $class
+     * @param null|mixed $workflow_name
+     *
      * @throws \Exception
      */
     public function load($class, $workflow_name = null): static
@@ -143,8 +147,9 @@ class WorkflowRegistry
      * @param Workflow $workflow
      * @param string $supportStrategy
      *
-     * @return void
      * @throws DuplicateWorkflowException
+     *
+     * @return void
      */
     public function add(Workflow $workflow, $supportStrategy)
     {

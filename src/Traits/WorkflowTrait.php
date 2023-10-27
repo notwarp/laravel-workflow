@@ -58,6 +58,7 @@ trait WorkflowTrait
 
     /**
      * @param $workflow
+     *
      * @return mixed
      */
     public function getAllFinalStatus($workflow = null)
@@ -67,6 +68,7 @@ trait WorkflowTrait
 
     /**
      * @param $workflow
+     *
      * @return mixed
      */
     public function getFinalStatus($workflow = null)
