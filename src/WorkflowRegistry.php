@@ -243,7 +243,7 @@ class WorkflowRegistry
      */
     public function getLastStatus()
     {
-        return $this->current_workflow['last_places'];
+        return $this->current_workflow['final_status'];
     }
 
     public function hasTransition(): bool
