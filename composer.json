@@ -1,5 +1,5 @@
 {
-    "name": "lucaterribili/laravel-workflow",
+    "name": "notwarp/laravel-workflow",
     "description": "Integerate Symfony Workflow component into Laravel.",
     "keywords": ["workflow", "symfony", "laravel", "laravel7", "laravel8"],
     "license": "MIT",
