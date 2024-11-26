@@ -21,11 +21,11 @@ class WorkflowServiceProvider extends ServiceProvider
         $configPath = $this->configPath();
         $databasePath = $this->databasePath();
         $this->publishes([
-            "${configPath}/workflow.php" => $this->publishPath('workflow.php'),
-            "${configPath}/workflow_registry.php" => $this->publishPath('workflow_registry.php'),
+            "{$configPath}/workflow.php" => $this->publishPath('workflow.php'),
+            "{$configPath}/workflow_registry.php" => $this->publishPath('workflow_registry.php'),
         ], 'config');
         $this->publishes([
-            "${databasePath}/migrations/" => database_path('migrations'),
+            "{$databasePath}/migrations/" => database_path('migrations'),
         ], 'migrations');
     }
 
